@@ -1,4 +1,4 @@
-package ec.ups.edu.poo.vista;
+package ec.edu.ups.poo.vista;
 import javax.swing.*;
 
 public class ProductoView extends JFrame {

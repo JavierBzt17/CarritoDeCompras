@@ -1,4 +1,4 @@
-package ec.ups.edu.poo;
+package ec.edu.ups.poo.modelo;
 
 import java.util.ArrayList;
 import java.util.List;

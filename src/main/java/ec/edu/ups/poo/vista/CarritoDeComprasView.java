@@ -1,7 +1,6 @@
-package ec.ups.edu.poo.vista;
+package ec.edu.ups.poo.vista;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class CarritoDeComprasView extends JFrame {
     private JPanel panelPrincipal;

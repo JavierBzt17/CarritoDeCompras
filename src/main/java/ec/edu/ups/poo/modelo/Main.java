@@ -1,4 +1,4 @@
-package ec.ups.edu.poo;
+package ec.edu.ups.poo.modelo;
 
 public class Main {
     public static void main(String[] args) {
