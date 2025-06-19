@@ -5,6 +5,7 @@ import ec.edu.ups.modelo.Producto;
 import ec.edu.ups.vista.CarritoAnadirView;
 import ec.edu.ups.vista.ProductoAnadirView;
 import ec.edu.ups.vista.ProductoListaView;
+import ec.edu.ups.vista.ProductoEliminarView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,18 +16,20 @@ public class ProductoController {
     private final ProductoAnadirView productoAnadirView;
     private final ProductoListaView productoListaView;
     private final CarritoAnadirView carritoAnadirView;
+    private final ProductoEliminarView productoEliminarView;
 
     private final ProductoDAO productoDAO;
 
     public ProductoController(ProductoDAO productoDAO,
                               ProductoAnadirView productoAnadirView,
                               ProductoListaView productoListaView,
-                              CarritoAnadirView carritoAnadirView) {
+                              CarritoAnadirView carritoAnadirView, ProductoEliminarView productoEliminarView) {
 
         this.productoDAO = productoDAO;
         this.productoAnadirView = productoAnadirView;
         this.productoListaView = productoListaView;
         this.carritoAnadirView = carritoAnadirView;
+        this.productoEliminarView = productoEliminarView;
         this.configurarEventosEnVistas();
     }
 
@@ -37,26 +40,30 @@ public class ProductoController {
                 guardarProducto();
             }
         });
-
         productoListaView.getBtnBuscar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 buscarProducto();
             }
         });
-
         productoListaView.getBtnListar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 listarProductos();
             }
         });
-
         carritoAnadirView.getBtnBuscar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 buscarProductoPorCodigo();
             }
+        });
+        productoEliminarView.getBtnEliminar().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminarProducto();
+            }
+
         });
     }
 
@@ -95,5 +102,22 @@ public class ProductoController {
             carritoAnadirView.getTxtPrecio().setText(String.valueOf(producto.getPrecio()));
         }
 
+
+    }
+    private void eliminarProducto() {
+        try {
+            int codigo = Integer.parseInt(productoEliminarView.getTxtCodigo().getText());
+            Producto producto = productoDAO.buscarPorCodigo(codigo);
+            if (producto != null) {
+                productoDAO.eliminar(producto.getCodigo());
+                productoEliminarView.mostrarMensaje("Producto eliminado correctamente");
+            } else {
+                productoEliminarView.mostrarMensaje("Producto no encontrado");
+            }
+        } catch (NumberFormatException ex) {
+            productoEliminarView.mostrarMensaje("Código inválido");
+        }
+
+        productoEliminarView.limpiarCampos();
     }
 }
