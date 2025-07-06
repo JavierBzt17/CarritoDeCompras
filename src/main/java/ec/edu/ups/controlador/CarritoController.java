@@ -49,7 +49,7 @@ public class CarritoController {
                 anadirProductoACarrito();
             }
         });
-        carritoAnadirView.getBtnAceptar().addActionListener(new ActionListener() {
+        carritoAnadirView.getBtnGuardar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 aceptarCarrito();
@@ -112,7 +112,7 @@ public class CarritoController {
     }
 
     private void anadirProductoACarrito() {
-        int codigo = Integer.parseInt(carritoAnadirView.getTxtBuscar().getText());
+        int codigo = Integer.parseInt(carritoAnadirView.getTxtCodigo().getText());
         Producto producto = productoDAO.buscarPorCodigo(codigo);
         int cantidad =  Integer.parseInt(carritoAnadirView.getCbxCantidad().getSelectedItem().toString());
         carrito.agregarProducto(producto, cantidad);
@@ -139,7 +139,7 @@ public class CarritoController {
 
     private void actualizarTotales() {
         Locale locale = mi.getLocale();
-        carritoAnadirView.getTxtSubTotal().setText(Formateador.formatearMoneda(carrito.calcularSubtotal(), locale));
+        carritoAnadirView.getTxtSubtotal().setText(Formateador.formatearMoneda(carrito.calcularSubtotal(), locale));
         carritoAnadirView.getTxtIVA().setText(Formateador.formatearMoneda(carrito.calcularIVA(), locale));
         carritoAnadirView.getTxtTotal().setText(Formateador.formatearMoneda(carrito.calcularTotal(), locale));
     }
@@ -154,7 +154,7 @@ public class CarritoController {
         carritoDAO.crear(carrito);
         String mensaje = mi.get("carrito.msj.guardado")
                 .replace("{0}", String.valueOf(carrito.getCodigo()))
-                .replace("{1}", usuario.getUsername());
+                .replace("{1}", usuario.getUsuario());
         carritoAnadirView.mostrarMensaje(mensaje);
 
         carrito.vaciarCarrito();
@@ -208,7 +208,7 @@ public class CarritoController {
         Carrito carrito = carritoDAO.buscarPorCodigo(codigo);
         if (carrito != null) {
             if (usuario.getRol().equals(Rol.ADMINISTRADOR)
-                    || carrito.getUsuario().getUsername().equals(usuario.getUsername())) {
+                    || carrito.getUsuario().getUsuario().equals(usuario.getUsuario())) {
                 carritoListaView.cargarDatos(List.of(carrito));
             } else {
                 carritoListaView.cargarDatos(List.of());
