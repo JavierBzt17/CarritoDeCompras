@@ -3,48 +3,48 @@ package ec.edu.ups.modelo;
 import java.util.GregorianCalendar;
 
 public class Usuario {
-    private String username;
-    private String contrasenia;
+    private String usuario;
+    private String contrasena;
     private Rol rol;
     private String nombre;
-    private String celular;
+    private String telefono;
     private GregorianCalendar fecha;
-    private String email;
+    private String correo;
 
-    public Usuario(String nombreDeUsuario, String contrasenia, Rol rol, String nombre,
-                   String celular, GregorianCalendar fecha, String email) {
-        this.username = nombreDeUsuario;
-        this.contrasenia = contrasenia;
+    public Usuario(String nombreUsuario, String contrasena, Rol rol, String nombre,
+                   String telefono, GregorianCalendar fecha, String correo) {
+        this.usuario = nombreUsuario;
+        this.contrasena = contrasena;
         this.rol = rol;
         this.nombre = nombre;
-        this.celular = celular;
+        this.telefono = telefono;
         this.fecha = fecha;
-        this.email = email;
+        this.correo = correo;
     }
     public Usuario() {}
 
-    public String getEmail() {
-        return email;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
-    public String getContrasenia() {
-        return contrasenia;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public Rol getRol() {
@@ -63,12 +63,12 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public String getCelular() {
-        return celular;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public GregorianCalendar getFecha() {

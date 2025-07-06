@@ -8,16 +8,13 @@ import java.util.Iterator;
 
 public class Carrito {
     private final double IVA = 0.12;
-    //private static int contador = 1;
     private int codigo;
     private GregorianCalendar fechaCreacion;
     private List<ItemCarrito> items;
     private Usuario usuario;
 
     public Carrito() {
-        //codigo = contador++;
-        items = new ArrayList<>();
-    }
+        items = new ArrayList<>();}
 
     public Usuario getUsuario() {
         return usuario;

@@ -12,9 +12,9 @@ public enum Pregunta {
     PELICULA_FAVORITA("pregunta.pelicula_favorita"),
     NOMBRE_MADRE("pregunta.nombre_madre"),
     NOMBRE_PADRE("pregunta.nombre_padre"),
-    APODO_INFANCIA("pregunta.apodo_infancia"),
+    NOMBRE_CARINO("pregunta.nombre_carino"),
     OBJETO_PERSONAL("pregunta.objeto_personal"),
-    NOMBRE_HERMANO("pregunta.nombre_hermano"),
+    CANTIDAD_HERMANOS("pregunta.cantidad_hermanos"),
     NOMBRE_PRIMERA_ESCUELA("pregunta.nombre_primera_escuela");
 
     private String enunciado;

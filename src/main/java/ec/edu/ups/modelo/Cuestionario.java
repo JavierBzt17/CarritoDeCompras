@@ -7,17 +7,17 @@ import java.util.List;
 
 
 public class Cuestionario {
-    private String username;
+    private String usuario;
     private List<Respuesta> respuestas;
 
-    public Cuestionario(String username) {
-        this.username = username;
+    public Cuestionario(String usuario) {
+        this.usuario = usuario;
         this.respuestas = new ArrayList<>();
 
     }
 
-    public String getUsername() {
-        return username;
+    public String getUsuario() {
+        return usuario;
     }
 
     public List<Respuesta> getRespuestas() {
