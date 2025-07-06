@@ -266,7 +266,7 @@ public class ProductoController {
     }
 
     private void buscarProductoCarrito() {
-        String txtCod = carritoAnadirView.getTxtBuscar().getText().trim();
+        String txtCod = carritoAnadirView.getTxtCodigo().getText().trim();
 
         if (txtCod.isEmpty()) {
             carritoAnadirView.mostrarMensaje(mi.get("producto.mensaje.error.ingresar.codigo"));

@@ -239,7 +239,7 @@ public class UsuarioController {
 
             RecuperarContraseñaView recuperarView = new RecuperarContraseñaView(mi);
             CuestionarioController controller = new CuestionarioController(
-                    recuperarView, cuestionarioDAO, username, usuario.getContrasenia(), mi
+                    recuperarView, cuestionarioDAO, username, usuario.getContrasena(), mi
             );
 
             recuperarView.setVisible(true);
@@ -266,22 +266,22 @@ public class UsuarioController {
             return;
         }
 
-        String username = usuarioCrearView.getTxtUsuario().getText().trim();
-        String contrasenia = usuarioCrearView.getTxtContrasena().getText().trim();
+        String usuario = usuarioCrearView.getTxtUsuario().getText().trim();
+        String contrasena = usuarioCrearView.getTxtContrasena().getText().trim();
         String nombre = usuarioCrearView.getTxtNombre().getText().trim();
-        String celular = usuarioCrearView.getTxtTelefono().getText().trim();
+        String telefono = usuarioCrearView.getTxtTelefono().getText().trim();
         String correo = usuarioCrearView.getTxtCorreo().getText().trim();
         int dia = (int) usuarioCrearView.getSpnDia().getValue();
         int mes = (int) usuarioCrearView.getSpnMes().getValue();
-        int anio = (int) usuarioCrearView.getSpnAno().getValue();
+        int ano = (int) usuarioCrearView.getSpnAno().getValue();
 
-        if (username.isEmpty() || contrasenia.isEmpty() || nombre.isEmpty() || celular.isEmpty() || correo.isEmpty()) {
+        if (usuario.isEmpty() || contrasena.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
             usuarioCrearView.mostrarMensaje(mi.get("cuestionario.finalizar.error_datos_vacios"));
             return;
         }
 
-        if (!celular.matches("\\d{7,15}")) {
-            usuarioCrearView.mostrarMensaje("Número de celular inválido. Solo dígitos y al menos 7 números.");
+        if (!telefono.matches("\\d{7,15}")) {
+            usuarioCrearView.mostrarMensaje("Número de celular inválido.");
             return;
         }
 
@@ -290,18 +290,18 @@ public class UsuarioController {
             return;
         }
 
-        if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || anio < 1) {
+        if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || ano < 1) {
             usuarioCrearView.mostrarMensaje("Fecha de nacimiento inválida.");
             return;
         }
 
-        if (usuarioDAO.buscarPorUsername(username) != null) {
+        if (usuarioDAO.buscarPorUsername(usuario) != null) {
             usuarioCrearView.mostrarMensaje(mi.get("usuario.mensaje.crear.existe"));
             return;
         }
 
-        GregorianCalendar fechaNacimiento = new GregorianCalendar(anio, mes - 1, dia); // mes - 1 porque enero = 0
-        Usuario usuario1 = new Usuario(username, contrasenia, Rol.USUARIO, nombre, celular, fechaNacimiento, correo);
+        GregorianCalendar fechaNacimiento = new GregorianCalendar(ano, mes - 1, dia); // mes - 1 porque enero = 0
+        Usuario usuario1 = new Usuario(usuario, contrasena, Rol.USUARIO, nombre, telefono, fechaNacimiento, correo);
         usuarioDAO.crear(usuario1);
 
         usuarioCrearView.mostrarMensaje(mi.get("usuario.mensaje.creado"));
@@ -316,21 +316,21 @@ public class UsuarioController {
             return;
         }
 
-        String username = usuarioEliminarView.getTxtUsuario().getText().trim();
+        String user= usuarioEliminarView.getTxtUsuario().getText().trim();
 
-        if (username.isEmpty()) {
-            usuarioEliminarView.mostrarMensaje("Debe ingresar un nombre de usuario.");
+        if (user.isEmpty()) {
+            usuarioEliminarView.mostrarMensaje("Ingrese un nombre de usuario.");
             return;
         }
 
-        Usuario usuario = usuarioDAO.buscarPorUsername(username);
+        Usuario usuario = usuarioDAO.buscarPorUsername(user);
 
         if (usuario == null) {
-            usuarioEliminarView.mostrarMensaje("El usuario no existe.");
+            usuarioEliminarView.mostrarMensaje("El usuario que usted busca no existe.");
             return;
         }
 
-        usuarioDAO.eliminar(username);
+        usuarioDAO.eliminar(user);
         usuarioEliminarView.mostrarMensaje(mi.get("usuario.mensaje.eliminado"));
         usuarioEliminarView.limpiarCampos();
     }
@@ -339,7 +339,7 @@ public class UsuarioController {
         String username = usuarioEliminarView.getTxtUsuario().getText().trim();
 
         if (username.isEmpty()) {
-            usuarioEliminarView.mostrarMensaje("Ingrese un nombre de usuario para buscar.");
+            usuarioEliminarView.mostrarMensaje("Ingrese el nombre de usuario que desea buscar.");
             return;
         }
 
@@ -351,10 +351,10 @@ public class UsuarioController {
             return;
         }
 
-        usuarioEliminarView.getTxtContrasena().setText(usuario.getContrasenia());
+        usuarioEliminarView.getTxtContrasena().setText(usuario.getContrasena());
         usuarioEliminarView.getTxtNombre().setText(usuario.getNombre());
-        usuarioEliminarView.getTxtTelefono().setText(usuario.getCelular());
-        usuarioEliminarView.getTxtCorreo().setText(usuario.getEmail());
+        usuarioEliminarView.getTxtTelefono().setText(usuario.getTelefono());
+        usuarioEliminarView.getTxtCorreo().setText(usuario.getCorreo());
 
         GregorianCalendar fecha = usuario.getFecha();
         usuarioEliminarView.getSpnDia().setValue(fecha.get(Calendar.DAY_OF_MONTH));
@@ -367,11 +367,11 @@ public class UsuarioController {
         Usuario usuario1 = usuarioDAO.buscarPorUsername(username);
 
         if (usuario1 != null) {
-            usuarioModificarView.getTxtUsuario().setText(usuario1.getUsername());
-            usuarioModificarView.getTxtContrasena().setText(usuario1.getContrasenia());
+            usuarioModificarView.getTxtUsuario().setText(usuario1.getUsuario());
+            usuarioModificarView.getTxtContrasena().setText(usuario1.getContrasena());
             usuarioModificarView.getTxtNombre().setText(usuario1.getNombre());
-            usuarioModificarView.getTxtTelefono().setText(usuario1.getCelular());
-            usuarioModificarView.getTxtCorreo().setText(usuario1.getEmail());
+            usuarioModificarView.getTxtTelefono().setText(usuario1.getTelefono());
+            usuarioModificarView.getTxtCorreo().setText(usuario1.getCorreo());
 
             GregorianCalendar fecha = usuario1.getFecha();
             usuarioModificarView.getSpnDia().setValue(fecha.get(Calendar.DAY_OF_MONTH));
@@ -397,21 +397,21 @@ public class UsuarioController {
             return;
         }
 
-        String usernameNuevo = usuarioModificarView.getTxtUsuario().getText().trim();
-        String contrasenia = usuarioModificarView.getTxtContrasena().getText().trim();
+        String usuarionuevo = usuarioModificarView.getTxtUsuario().getText().trim();
+        String contrasena = usuarioModificarView.getTxtContrasena().getText().trim();
         String nombre = usuarioModificarView.getTxtNombre().getText().trim();
-        String celular = usuarioModificarView.getTxtTelefono().getText().trim();
+        String telefono = usuarioModificarView.getTxtTelefono().getText().trim();
         String correo = usuarioModificarView.getTxtCorreo().getText().trim();
         int dia = (int) usuarioModificarView.getSpnDia().getValue();
         int mes = (int) usuarioModificarView.getSpnMes().getValue();
         int anio = (int) usuarioModificarView.getSpnAno().getValue();
 
-        if (usernameNuevo.isEmpty() || contrasenia.isEmpty() || nombre.isEmpty() || celular.isEmpty() || correo.isEmpty()) {
+        if (usuarionuevo.isEmpty() || contrasena.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
             usuarioModificarView.mostrarMensaje(mi.get("cuestionario.finalizar.error_datos_vacios"));
             return;
         }
 
-        if (!celular.matches("\\d{7,15}")) {
+        if (!telefono.matches("\\d{7,15}")) {
             usuarioModificarView.mostrarMensaje("Número de celular inválido. Solo dígitos y mínimo 7 caracteres.");
             return;
         }
@@ -425,16 +425,16 @@ public class UsuarioController {
             usuarioModificarView.mostrarMensaje("Fecha de nacimiento inválida.");
             return;
         }
-        if (!usernameNuevo.equals(usernameOriginal) && usuarioDAO.buscarPorUsername(usernameNuevo) != null) {
+        if (!usuarionuevo.equals(usernameOriginal) && usuarioDAO.buscarPorUsername(usuarionuevo) != null) {
             usuarioModificarView.mostrarMensaje(mi.get("usuario.mensaje.crear.existe"));
             return;
         }
 
-        usuario1.setUsername(usernameNuevo);
-        usuario1.setContrasenia(contrasenia);
+        usuario1.setUsuario(usuarionuevo);
+        usuario1.setContrasena(contrasena);
         usuario1.setNombre(nombre);
-        usuario1.setCelular(celular);
-        usuario1.setEmail(correo);
+        usuario1.setTelefono(telefono);
+        usuario1.setTelefono(correo);
         usuario1.setFecha(new GregorianCalendar(anio, mes - 1, dia));
 
         usuarioDAO.actualizar(usuario1);

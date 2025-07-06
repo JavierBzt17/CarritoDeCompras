@@ -82,12 +82,12 @@ public class CuestionarioController {
         this.usuario = usuario;
 
         if (usuarioYaRegistrado) {
-            this.cuestionario = cuestionarioDAO.buscarPorUsername(usuario.getUsername());
+            this.cuestionario = cuestionarioDAO.buscarPorUsername(usuario.getUsuario());
             if (this.cuestionario == null) {
-                this.cuestionario = new Cuestionario(usuario.getUsername());
+                this.cuestionario = new Cuestionario(usuario.getUsuario());
             }
         } else {
-            this.cuestionario = new Cuestionario(usuario.getUsername());
+            this.cuestionario = new Cuestionario(usuario.getUsuario());
         }
 
         this.cuestionario.aplicarIdioma(mi);
@@ -143,7 +143,7 @@ public class CuestionarioController {
             }
         });
 
-        recuperarView.getBtnFinalizar().addActionListener(new ActionListener() {
+        recuperarView.getBtnTerminar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 finalizarRecuperar(contrasenia);
@@ -274,7 +274,7 @@ public class CuestionarioController {
             }
 
             if (!correo.matches("^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$")) {
-                cuestionarioView.mostrarMensaje("Correo electrónico inválido.");
+                cuestionarioView.mostrarMensaje("Correo inválido.");
                 return;
             }
 
@@ -344,11 +344,11 @@ public class CuestionarioController {
     }
 
     private void setearCamposVista(Usuario usuario){
-        cuestionarioView.getTxtUsuario().setText(usuario.getUsername());
-        cuestionarioView.getTxtContrasena().setText(usuario.getContrasenia());
+        cuestionarioView.getTxtUsuario().setText(usuario.getUsuario());
+        cuestionarioView.getTxtContrasena().setText(usuario.getContrasena());
         cuestionarioView.getTxtNombre().setText(usuario.getNombre());
-        cuestionarioView.getTxtTelefono().setText(usuario.getCelular());
-        cuestionarioView.getTxtCorreo().setText(usuario.getEmail());
+        cuestionarioView.getTxtTelefono().setText(usuario.getTelefono());
+        cuestionarioView.getTxtCorreo().setText(usuario.getCorreo());
 
         GregorianCalendar fecha = usuario.getFecha();
         cuestionarioView.getSpnDia().setValue(fecha.get(Calendar.DAY_OF_MONTH));
