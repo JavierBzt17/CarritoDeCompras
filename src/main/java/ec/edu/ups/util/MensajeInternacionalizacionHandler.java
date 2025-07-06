@@ -23,6 +23,6 @@ public class MensajeInternacionalizacionHandler {
     }
 
     public Locale getLocale() {
-        return locale;
+        return  locale;
     }
 }
