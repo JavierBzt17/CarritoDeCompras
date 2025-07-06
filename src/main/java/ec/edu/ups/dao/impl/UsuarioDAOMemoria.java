@@ -17,23 +17,23 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         this.cuestionarioDAO = cuestionarioDAO;
 
         Usuario admin = new Usuario(
-                "admin",
-                "12345",
+                "administrador01",
+                "1881",
                 Rol.ADMINISTRADOR,
-                "Administrador General",
-                "0999999999",
-                new GregorianCalendar(1980, Calendar.JANUARY, 1),
-                "admin@gmail.com"
+                "Administrador",
+                "0959047144",
+                new GregorianCalendar(2000, Calendar.JULY, 12),
+                "admn01gmail.com"
         );
 
         Usuario user = new Usuario(
-                "user",
-                "12345",
+                "useruario01",
+                "2006",
                 Rol.USUARIO,
-                "Usuario de Prueba",
-                "0988888888",
+                "Usuario",
+                "0989453263",
                 new GregorianCalendar(1995, Calendar.JUNE, 15),
-                "user@gmail.com"
+                "usr01@gmail.com"
         );
         crear(admin);
         crear(user);
@@ -41,9 +41,9 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
 
 
     @Override
-    public Usuario autenticar(String username, String contrasenia) {
+    public Usuario autenticar(String username, String contrasena) {
         for (Usuario usuario : usuarios) {
-            if (usuario.getUsername().equals(username) && usuario.getContrasenia().equals(contrasenia)) {
+            if (usuario.getUsuario().equals(username) && usuario.getContrasena().equals(contrasena)) {
                 return usuario;
             }
         }
@@ -58,7 +58,7 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     @Override
     public Usuario buscarPorUsername(String username) {
         for (Usuario usuario : usuarios) {
-            if (usuario.getUsername().equals(username)) {
+            if (usuario.getUsuario().equals(username)) {
                 return usuario;
             }
         }
@@ -68,7 +68,7 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     @Override
     public void actualizar(Usuario usuario) {
         for (int i = 0; i < usuarios.size(); i++) {
-            if (usuarios.get(i).getUsername().equals(usuario.getUsername())) {
+            if (usuarios.get(i).getUsuario().equals(usuario.getUsuario())) {
                 usuarios.set(i, usuario);
                 break;
             }
@@ -80,7 +80,7 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         Iterator<Usuario> iterator = usuarios.iterator();
         while (iterator.hasNext()) {
             Usuario usuario = iterator.next();
-            if (usuario.getUsername().equals(username)) {
+            if (usuario.getUsuario().equals(username)) {
                 iterator.remove();
             }
         }

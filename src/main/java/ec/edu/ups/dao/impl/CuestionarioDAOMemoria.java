@@ -13,13 +13,12 @@ public class CuestionarioDAOMemoria implements CuestionarioDAO {
     private List<Cuestionario> cuestionarios;
     public CuestionarioDAOMemoria() {
         this.cuestionarios = new ArrayList<>();
-        Cuestionario cuestionarioAdmin = new Cuestionario("admin");
-        //cuestionarioAdmin.aplicarIdioma(mi);
+        Cuestionario cuestionarioAdmin = new Cuestionario("admin");;
         List<Respuesta> preguntas = cuestionarioAdmin.preguntasPorDefecto();
 
         preguntas.get(0).setRespuesta("Negro");
-        preguntas.get(1).setRespuesta("Kobu");
-        preguntas.get(2).setRespuesta("Churrasco");
+        preguntas.get(1).setRespuesta("Ba");
+        preguntas.get(2).setRespuesta("Pizza");
 
         cuestionarioAdmin.agregarRespuesta(preguntas.get(0));
         cuestionarioAdmin.agregarRespuesta(preguntas.get(1));
@@ -36,7 +35,7 @@ public class CuestionarioDAOMemoria implements CuestionarioDAO {
     @Override
     public Cuestionario buscarPorUsername(String username) {
         for (Cuestionario cuestionario : cuestionarios) {
-            if (cuestionario.getUsername().equalsIgnoreCase(username)) {
+            if (cuestionario.getUsuario().equalsIgnoreCase(username)) {
                 return cuestionario;
             }
         }
