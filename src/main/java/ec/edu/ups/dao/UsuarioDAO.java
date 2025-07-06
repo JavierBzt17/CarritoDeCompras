@@ -5,15 +5,15 @@ import ec.edu.ups.modelo.Usuario;
 import java.util.List;
 
 public interface UsuarioDAO {
-    Usuario autenticar(String username, String contrasenia);
+    Usuario autenticar(String user, String contrasena);
 
     void crear(Usuario usuario);
 
-    Usuario buscarPorUsername(String username);
+    Usuario buscarPorUsername(String user);
 
     void actualizar(Usuario usuario);
 
-    void eliminar(String username);
+    void eliminar(String user);
 
     List<Usuario> listarTodos();
 
