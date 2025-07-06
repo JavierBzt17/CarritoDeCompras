@@ -1,0 +1,169 @@
+package ec.edu.ups.vista.producto;
+
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+
+import javax.swing.*;
+import java.net.URL;
+
+public class ProductoEliminarView extends JInternalFrame {
+    private JPanel panelPrincipal;
+    private JLabel lblEliminar;
+    private JTextField txtCodigo;
+    private JTextField txtNombre;
+    private JTextField txtPrecio;
+    private JButton btnEliminar;
+    private JLabel lblPrecio;
+    private JLabel lblNombre;
+    private JLabel lblCodigo;
+    private JButton btnBuscar;
+    private MensajeInternacionalizacionHandler mi;
+
+    public ProductoEliminarView(MensajeInternacionalizacionHandler mi){
+        setContentPane(panelPrincipal);
+        setTitle("Edición de Productos");
+        setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+        setSize(500, 500);
+        //setResizable(false);
+        //setLocation(100,500);
+        //setVisible(true);
+        //pack();
+        setClosable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setIconifiable(true);
+        this.mi = mi;
+        cambiarIdioma();
+        inicializarImagenes();
+    }
+
+    public boolean mostrarMensajePregunta(String mensaje) {
+        int respuesta = JOptionPane.showConfirmDialog(this, mensaje, "Confirmación",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return respuesta == JOptionPane.YES_OPTION;
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
+    public void limpiarCampos() {
+        txtNombre.setText("");
+        txtPrecio.setText("");
+    }
+
+    public JPanel getPanelPrincipal() {
+        return panelPrincipal;
+    }
+
+    public void setPanelPrincipal(JPanel panelPrincipal) {
+        this.panelPrincipal = panelPrincipal;
+    }
+
+    public JLabel getLblEliminar() {
+        return lblEliminar;
+    }
+
+    public void setLblEliminar(JLabel lblEliminar) {
+        this.lblEliminar = lblEliminar;
+    }
+
+    public JTextField getTxtCodigo() {
+        return txtCodigo;
+    }
+
+    public void setTxtCodigo(JTextField txtCodigo) {
+        this.txtCodigo = txtCodigo;
+    }
+
+    public JTextField getTxtNombre() {
+        return txtNombre;
+    }
+
+    public void setTxtNombre(JTextField txtNombre) {
+        this.txtNombre = txtNombre;
+    }
+
+    public JTextField getTxtPrecio() {
+        return txtPrecio;
+    }
+
+    public void setTxtPrecio(JTextField txtPrecio) {
+        this.txtPrecio = txtPrecio;
+    }
+
+    public JButton getBtnEliminar() {
+        return btnEliminar;
+    }
+
+    public void setBtnEliminar(JButton btnEliminar) {
+        this.btnEliminar = btnEliminar;
+    }
+
+    public JLabel getLblPrecio() {
+        return lblPrecio;
+    }
+
+    public void setLblPrecio(JLabel lblPrecio) {
+        this.lblPrecio = lblPrecio;
+    }
+
+    public JLabel getLblNombre() {
+        return lblNombre;
+    }
+
+    public void setLblNombre(JLabel lblNombre) {
+        this.lblNombre = lblNombre;
+    }
+
+    public JLabel getLblCodigo() {
+        return lblCodigo;
+    }
+
+    public void setLblCodigo(JLabel lblCodigo) {
+        this.lblCodigo = lblCodigo;
+    }
+
+    public JButton getBtnBuscar() {
+        return btnBuscar;
+    }
+
+    public void setBtnBuscar(JButton btnBuscar) {
+        this.btnBuscar = btnBuscar;
+    }
+
+    public void cambiarIdioma() {
+        if (mi == null) return;
+
+        setTitle(mi.get("producto.eliminar.titulo.ventana"));
+
+        if (lblCodigo != null) lblCodigo.setText(mi.get("producto.eliminar.codigo"));
+        if (lblNombre != null) lblNombre.setText(mi.get("producto.eliminar.nombre"));
+        if (lblPrecio != null) lblPrecio.setText(mi.get("producto.eliminar.precio"));
+
+        if (btnBuscar != null) btnBuscar.setText(mi.get("producto.eliminar.buscar"));
+        if (btnEliminar != null) btnEliminar.setText(mi.get("producto.eliminar.eliminar"));
+
+        UIManager.put("OptionPane.yesButtonText", mi.get("dialogo.boton.si"));
+        UIManager.put("OptionPane.noButtonText", mi.get("dialogo.boton.no"));
+        UIManager.put("OptionPane.cancelButtonText", mi.get("dialogo.boton.cancelar"));
+        UIManager.put("OptionPane.okButtonText", mi.get("dialogo.boton.aceptar"));
+    }
+    public void inicializarImagenes(){
+        URL buscar = ProductoEditarView.class.getClassLoader().getResource("imagenes/buscar.png");
+        if (buscar != null) {
+            ImageIcon iconoBtnIniciarSesion = new ImageIcon(buscar);
+            btnBuscar.setIcon(iconoBtnIniciarSesion);
+        } else {
+            System.err.println("Error, No se cargo el icono Login");
+        }
+
+        URL eliminar = ProductoEditarView.class.getClassLoader().getResource("imagenes/eliminar.png");
+        if (eliminar != null) {
+            ImageIcon iconoBtnIniciarSesion = new ImageIcon(eliminar);
+            btnEliminar.setIcon(iconoBtnIniciarSesion);
+        } else {
+            System.err.println("Error, No se ha cargo el icono Login");
+        }
+    }
+}
+
+
