@@ -34,7 +34,7 @@ public class CarritoAnadirView extends JInternalFrame {
         super("Carrito de Compras", true, true, false, true);
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 500);
+        setSize(700, 700);
 
         modelo = new DefaultTableModel();
         tblProductos.setModel(modelo);

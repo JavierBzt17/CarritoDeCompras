@@ -34,10 +34,10 @@ public class CrearUsuarioView extends JInternalFrame {
         this.mi = mi;
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 500);
+        setSize(700, 700);
         spnDia.setModel(new SpinnerNumberModel(1, 1, 31, 1));
         spnMes.setModel(new SpinnerNumberModel(1, 1, 12, 1));
-        spnAno.setModel(new SpinnerNumberModel(2000, 1, 2100, 1));
+        spnAno.setModel(new SpinnerNumberModel(2000, 1900, 2025, 1));
 
         btnLimpiar.addActionListener(new ActionListener() {
             @Override

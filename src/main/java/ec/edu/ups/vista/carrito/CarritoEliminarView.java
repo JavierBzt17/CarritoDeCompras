@@ -33,7 +33,7 @@ public class CarritoEliminarView extends JInternalFrame {
         setContentPane(panelPrincipal);
         setTitle("Edicion de Carrito");
         setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 500);
+        setSize(700, 700);
         setClosable(true);
         setMaximizable(true);
         setResizable(true);
