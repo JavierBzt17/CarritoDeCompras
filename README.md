@@ -5,7 +5,7 @@ Su objetivo principal es demostrar el uso de *patrones de diseño* aplicados a u
 
 ---
 
-Video: [Videos Explicativos ](https://youtu.be/p7KtRPEsLc8),(https://youtu.be/s6ZPopZhLkA)
+Video: [Video1 Explicativo ](https://youtu.be/p7KtRPEsLc8), Video Ejecucion(https://youtu.be/s6ZPopZhLkA)
 
 ---
 
