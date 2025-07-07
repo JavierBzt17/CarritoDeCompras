@@ -15,6 +15,8 @@ public class RecuperarContraseñaView extends JFrame {
     private JPanel panelPrincipal;
     private JLabel lblTitulo;
     private JButton btnTerminar;
+    private JButton btnGenerar;
+    private JTextField txtPreguntas;
     private MensajeInternacionalizacionHandler mi;
 
 
@@ -114,13 +116,29 @@ public class RecuperarContraseñaView extends JFrame {
         this.btnTerminar = btnTerminar;
     }
 
+    public JButton getBtnGenerar() {
+        return btnGenerar;
+    }
+
+    public void setBtnGenerar(JButton btnGenerar) {
+        this.btnGenerar = btnGenerar;
+    }
+
+    public JTextField getTxtPreguntas() {
+        return txtPreguntas;
+    }
+
+    public void setTxtPreguntas(JTextField txtPreguntas) {
+        this.txtPreguntas = txtPreguntas;
+    }
+
     public void inicializarImagenes(){
         URL guardar = RecuperarContraseñaView .class.getClassLoader().getResource("imagenes/guardar.png");
         if (guardar != null) {
             ImageIcon iconoBtnIniciarSesion = new ImageIcon(guardar);
             btnGuardar.setIcon(iconoBtnIniciarSesion);
         } else {
-            System.err.println("Error: No se ha cargado el icono de Login");
+            System.err.println("Error, No se cargo el icono Login");
         }
 
         URL finalizar = RecuperarContraseñaView .class.getClassLoader().getResource("imagenes/finalizar.png");
@@ -128,12 +146,7 @@ public class RecuperarContraseñaView extends JFrame {
             ImageIcon iconoBtnIniciarSesion = new ImageIcon(finalizar);
             btnTerminar.setIcon(iconoBtnIniciarSesion);
         } else {
-            System.err.println("Error: No se ha cargado el icono de Login");
+            System.err.println("Error, No se cargo el icono Login");
         }
     }
-
-
-
-
-
 }

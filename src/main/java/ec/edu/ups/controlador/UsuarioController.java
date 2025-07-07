@@ -7,7 +7,7 @@ import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.preguntas.RecuperarContraseñaView;
-import ec.edu.ups.vista.preguntas.CuestionarioView;
+import ec.edu.ups.vista.preguntas.PreguntasView;
 import ec.edu.ups.vista.usuario.*;
 
 import javax.swing.*;
@@ -162,7 +162,7 @@ public class UsuarioController {
             if (cuestionario == null || cuestionario.getRespuestas().size() < 3) {
                 loginView.mostrarMensaje(mi.get("login.mensaje.incompleto"));
 
-                CuestionarioView cuestionarioView = new CuestionarioView(mi);
+                PreguntasView cuestionarioView = new PreguntasView(mi);
                 CuestionarioController controller = new CuestionarioController(
                         cuestionarioView, cuestionarioDAO, usuarioDAO, usuario, mi, true);
                 cuestionarioView.setVisible(true);
@@ -195,7 +195,7 @@ public class UsuarioController {
     private void registrar() {
         boolean confirmado = loginView.mostrarMensajePregunta(mi.get("login.mensaje.pregunta_registro"));
         if (confirmado) {
-            CuestionarioView cuestionarioView = new CuestionarioView(mi);
+            PreguntasView cuestionarioView = new PreguntasView(mi);
             CuestionarioController cuestionarioController = new CuestionarioController(
                     cuestionarioView, cuestionarioDAO, usuarioDAO, mi
             );

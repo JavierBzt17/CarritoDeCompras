@@ -4,7 +4,7 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Collections;
 
 public class Cuestionario {
     private String usuario;
@@ -13,7 +13,6 @@ public class Cuestionario {
     public Cuestionario(String usuario) {
         this.usuario = usuario;
         this.respuestas = new ArrayList<>();
-
     }
 
     public String getUsuario() {
@@ -24,8 +23,18 @@ public class Cuestionario {
         return respuestas;
     }
 
-    public void agregarRespuesta(Respuesta respuesta) {
-        respuestas.add(respuesta);
+    public void agregarRespuesta(Respuesta nuevaRespuesta) {
+        boolean found = false;
+        for (int i = 0; i < respuestas.size(); i++) {
+            if (respuestas.get(i).equals(nuevaRespuesta)) {
+                respuestas.set(i, nuevaRespuesta);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            respuestas.add(nuevaRespuesta);
+        }
     }
 
     public Respuesta buscarRespuestaPorId(int idPregunta) {
@@ -45,7 +54,6 @@ public class Cuestionario {
         }
         return lista;
     }
-
     public void aplicarIdioma(MensajeInternacionalizacionHandler mi) {
         for (Pregunta p : Pregunta.values()) {
             p.setMensajeIdioma(mi);

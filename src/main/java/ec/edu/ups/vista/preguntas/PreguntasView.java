@@ -4,7 +4,7 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
 import java.net.URL;
-public class CuestionarioView extends JFrame{
+public class PreguntasView extends JFrame{
     private JPanel panelPrincipal;
     private JLabel lblVentPregunta;
     private JTextField txtNombre;
@@ -15,8 +15,7 @@ public class CuestionarioView extends JFrame{
     private JSpinner spnDia;
     private JSpinner spnMes;
     private JSpinner spnAno;
-    private JButton btnEmpezar;
-    private JComboBox cbxPreguntas;
+    private JButton btnGenerar;
     private JTextField txtRespuesta;
     private JButton btnGuardar;
     private JButton btnTerminar;
@@ -27,10 +26,11 @@ public class CuestionarioView extends JFrame{
     private JLabel lblUsuario;
     private JLabel lblContrasena;
     private JLabel lblPreguntasR;
+    private JTextField txtPreguntas;
 
     private MensajeInternacionalizacionHandler mi;
 
-    public CuestionarioView(MensajeInternacionalizacionHandler mi) {
+    public PreguntasView(MensajeInternacionalizacionHandler mi) {
         this.mi = mi;
         setTitle(mi.get("cuestionario.titulo"));
         setSize(600, 400);
@@ -68,12 +68,12 @@ public class CuestionarioView extends JFrame{
         this.panelPrincipal = panelPrincipal;
     }
 
-    public JLabel getLblVetPregunta() {
+    public JLabel getLblVentPregunta() {
         return lblVentPregunta;
     }
 
-    public void setLblVetPregunta(JLabel lblVetPregunta) {
-        this.lblVentPregunta = lblVetPregunta;
+    public void setLblVentPregunta(JLabel lblVentPregunta) {
+        this.lblVentPregunta = lblVentPregunta;
     }
 
     public JTextField getTxtNombre() {
@@ -140,20 +140,12 @@ public class CuestionarioView extends JFrame{
         this.spnAno = spnAno;
     }
 
-    public JButton getBtnEmpezar() {
-        return btnEmpezar;
+    public JButton getBtnGenerar() {
+        return btnGenerar;
     }
 
-    public void setBtnEmpezar(JButton btnEmpezar) {
-        this.btnEmpezar = btnEmpezar;
-    }
-
-    public JComboBox getCbxPreguntas() {
-        return cbxPreguntas;
-    }
-
-    public void setCbxPreguntas(JComboBox cbxPreguntas) {
-        this.cbxPreguntas = cbxPreguntas;
+    public void setBtnGenerar(JButton btnGenerar) {
+        this.btnGenerar = btnGenerar;
     }
 
     public JTextField getTxtRespuesta() {
@@ -236,8 +228,16 @@ public class CuestionarioView extends JFrame{
         this.lblPreguntasR = lblPreguntasR;
     }
 
+    public JTextField getTxtPreguntas() {
+        return txtPreguntas;
+    }
+
+    public void setTxtPreguntas(JTextField txtPreguntas) {
+        this.txtPreguntas = txtPreguntas;
+    }
+
     public void inicializarImagenes(){
-        URL guardar = CuestionarioView.class.getClassLoader().getResource("imagenes/guardar.png");
+        URL guardar = PreguntasView.class.getClassLoader().getResource("imagenes/guardar.png");
         if (guardar != null) {
             ImageIcon iconoBtnIniciarSesion = new ImageIcon(guardar);
             btnGuardar.setIcon(iconoBtnIniciarSesion);
@@ -245,7 +245,7 @@ public class CuestionarioView extends JFrame{
             System.err.println("Error, No se cargo el icono Login");
         }
 
-        URL finalizar = CuestionarioView.class.getClassLoader().getResource("imagenes/finalizar.png");
+        URL finalizar = PreguntasView.class.getClassLoader().getResource("imagenes/finalizar.png");
         if (finalizar != null) {
             ImageIcon iconoBtnIniciarSesion = new ImageIcon(finalizar);
             btnTerminar.setIcon(iconoBtnIniciarSesion);
@@ -255,7 +255,7 @@ public class CuestionarioView extends JFrame{
     }
 
     public void habilitarPreguntas(boolean habilitar) {
-        cbxPreguntas.setEnabled(habilitar);
+        txtPreguntas.setEnabled(habilitar);
         txtRespuesta.setEnabled(habilitar);
         btnGuardar.setEnabled(habilitar);
         btnTerminar.setEnabled(habilitar);
