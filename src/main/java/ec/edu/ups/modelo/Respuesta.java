@@ -13,7 +13,6 @@ public class Respuesta {
         this.respuesta = null;
     }
 
-
     public Respuesta(int id, String enunciado, String respuesta) {
         this.id = id;
         this.enunciado = enunciado;

@@ -10,8 +10,6 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.preguntas.RecuperarContraseñaView;
 import ec.edu.ups.vista.preguntas.PreguntasView;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 public class CuestionarioController {
@@ -19,14 +17,18 @@ public class CuestionarioController {
     private final PreguntasView cuestionarioView;
     private final RecuperarContraseñaView recuperarView;
     private final CuestionarioDAO cuestionarioDAO;
-    private Cuestionario cuestionario; // This is the user's stored Cuestionario with their answers
-    private List<Respuesta> preguntasAleatorias; // These are the *default* questions for selection or display
-    private List<Respuesta> respuestasCorrectas; // This list holds the user's *correctly provided answers for recovery attempt*
+    private Cuestionario cuestionario;
+    private List<Respuesta> preguntasAleatorias;
+    private List<Respuesta> respuestasCorrectas;
     private final MensajeInternacionalizacionHandler mi;
     private UsuarioDAO usuarioDAO;
     private boolean usuarioYaRegistrado;
     private Usuario usuario;
     private int indicePreguntaActual = 0;
+    private boolean cuestionarioIniciado = false;
+
+    // Para recuperación
+    private int indicePreguntaRecuperar = 0;
 
     public CuestionarioController(PreguntasView vista, CuestionarioDAO dao,
                                   UsuarioDAO usuarioDAO, MensajeInternacionalizacionHandler mi) {
@@ -35,9 +37,9 @@ public class CuestionarioController {
         this.cuestionarioDAO = dao;
         this.usuarioDAO = usuarioDAO;
         this.recuperarView = null;
-        this.cuestionario = null; // Cuestionario for a new user will be created later
+        this.cuestionario = null;
 
-        cargarComboPreguntas(); // Load default questions for selection
+        cargarComboPreguntas();
         configurarEventosCuestionario();
     }
 
@@ -46,39 +48,27 @@ public class CuestionarioController {
         this.mi = mi;
         this.cuestionarioDAO = dao;
         this.cuestionarioView = null;
-        this.cuestionario = cuestionarioDAO.buscarPorUsername(username); // Load the user's actual questionnaire
         this.recuperarView = recuperarView;
-        this.respuestasCorrectas = new ArrayList<>(); // Initialize for tracking correctly answered questions in this session
+        this.cuestionario = cuestionarioDAO.buscarPorUsername(username);
+        this.respuestasCorrectas = new ArrayList<>();
 
-        if (cuestionario == null || cuestionario.getRespuestas().size() < 3) { // Ensure user has at least 3 questions set
-            recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.noPreguntas")); // Message if not enough answers
+        if (cuestionario == null || cuestionario.getRespuestas().size() < 3) {
+            recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.noPreguntas"));
             recuperarView.dispose();
             return;
         }
 
-        // --- IMPORTANT CHANGE FOR RECOVERY FLOW ---
-        // For recovery, 'preguntasAleatorias' should be the user's *actual* stored security questions,
-        // from which we'll pick 3 random ones to ask.
         List<Respuesta> userSecurityQuestions = new ArrayList<>(cuestionario.getRespuestas());
-        Collections.shuffle(userSecurityQuestions); // Randomize the order
+        Collections.shuffle(userSecurityQuestions);
 
-        // Select up to 3 questions from the user's stored security questions
         this.preguntasAleatorias = new ArrayList<>();
         for (int i = 0; i < Math.min(3, userSecurityQuestions.size()); i++) {
             this.preguntasAleatorias.add(userSecurityQuestions.get(i));
         }
-        // --- END IMPORTANT CHANGE ---
-
-        // Populate the ComboBox with these selected random questions
-        for (int i = 0; i < preguntasAleatorias.size(); i++) {
-            String etiqueta = mi.get("cuestionario.pregunta");
-            recuperarView.getCbxPreguntas().addItem(etiqueta + " " + (i + 1));
-        }
 
         if (!preguntasAleatorias.isEmpty()) {
-            recuperarView.getLblPregunta().setText(preguntasAleatorias.get(0).getEnunciado());
-            // Optionally, clear the answer field if it's the first question
-            recuperarView.getTxtRespuesta().setText("");
+            indicePreguntaRecuperar = 0;
+            mostrarPreguntaRecuperarActual();
         }
 
         configurarEventosRecuperar(contrasenia);
@@ -105,7 +95,6 @@ public class CuestionarioController {
         }
 
         this.cuestionario.aplicarIdioma(mi);
-
         setearCamposVista(usuario);
         configurarEventosCuestionario();
     }
@@ -115,60 +104,44 @@ public class CuestionarioController {
 
         cuestionarioView.getBtnTerminar().addActionListener(e -> finalizar());
 
-        cuestionarioView.getBtnGenerar().addActionListener(e -> iniciarCuestionario());
+        cuestionarioView.getBtnGenerar().addActionListener(e -> {
+            if (!cuestionarioIniciado) {
+                iniciarCuestionario();
+                cuestionarioView.getBtnGenerar().setText("Siguiente");
+                cuestionarioIniciado = true;
+            } else {
+                guardar();
+                siguientePregunta();
+            }
+        });
     }
 
     private void configurarEventosRecuperar(String contrasena) {
-        recuperarView.getCbxPreguntas().addActionListener(e -> preguntasRecuperar());
+        // No hay JComboBox, por eso no se usa listener para cbxPreguntas
 
         recuperarView.getBtnGuardar().addActionListener(e -> guardarRespuestasRecuperar());
 
         recuperarView.getBtnTerminar().addActionListener(e -> finalizarRecuperar(contrasena));
 
-        // This listener should only be added if cuestionarioView is active (not null)
-        // and if it's actually tied to a button in that view.
-        // It seems to be a leftover from the main questionnaire logic.
-        // If your RecuperarContraseñaView has a "next question" button,
-        // you'd add a listener to *its* button for a similar purpose.
-        /*
-        if (cuestionarioView != null) {
-            cuestionarioView.getBtnGenerar().addActionListener(e -> siguientePregunta());
-        }
-        */
+        // Usamos btnGenerar para pasar a la siguiente pregunta
+        recuperarView.getBtnGenerar().addActionListener(e -> siguientePreguntaRecuperar());
     }
 
-    private void preguntasRecuperar() {
-        int index = recuperarView.getCbxPreguntas().getSelectedIndex();
-        if (index >= 0 && index < preguntasAleatorias.size()) {
-            Respuesta r = preguntasAleatorias.get(index); // This 'r' is one of the randomly selected user security questions
-
+    private void mostrarPreguntaRecuperarActual() {
+        if (indicePreguntaRecuperar >= 0 && indicePreguntaRecuperar < preguntasAleatorias.size()) {
+            Respuesta r = preguntasAleatorias.get(indicePreguntaRecuperar);
             recuperarView.getLblPregunta().setText(r.getEnunciado());
-
-            // Check if this specific question has already been answered correctly in this recovery session
-            boolean alreadyAnsweredCorrectly = false;
-            for (Respuesta correctR : respuestasCorrectas) {
-                if (correctR.equals(r)) { // Uses the overridden equals() based on ID
-                    recuperarView.getTxtRespuesta().setText(correctR.getRespuesta()); // Show the user's correctly provided answer
-                    alreadyAnsweredCorrectly = true;
-                    break;
-                }
-            }
-            if (!alreadyAnsweredCorrectly) {
-                recuperarView.getTxtRespuesta().setText(""); // Clear the text field if not answered correctly yet
-            }
+            recuperarView.getTxtRespuesta().setText("");
         }
     }
 
     private void guardarRespuestasRecuperar() {
-        int index = recuperarView.getCbxPreguntas().getSelectedIndex();
-        if (index < 0 || index >= preguntasAleatorias.size()) {
+        if (indicePreguntaRecuperar < 0 || indicePreguntaRecuperar >= preguntasAleatorias.size()) {
             recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.preguntaInvalida"));
             return;
         }
 
-        // 'userQuestion' is one of the questions randomly picked from the user's *stored* security questions.
-        // Its `getRespuesta()` will return the user's *actual stored answer* that we need to verify against.
-        Respuesta userQuestion = preguntasAleatorias.get(index);
+        Respuesta preguntaActual = preguntasAleatorias.get(indicePreguntaRecuperar);
         String respuestaUsuario = recuperarView.getTxtRespuesta().getText().trim();
 
         if (respuestaUsuario.isEmpty()) {
@@ -176,18 +149,12 @@ public class CuestionarioController {
             return;
         }
 
-        // Compare the user's input with their actual stored answer for this question
-        if (respuestaUsuario.equalsIgnoreCase(userQuestion.getRespuesta())) {
-            // Create a new Respuesta object to track this correctly answered question
-            // The important part is that it has the correct ID and the user's correct response
-            Respuesta answeredCorrectly = new Respuesta(userQuestion.getId(), userQuestion.getEnunciado(), respuestaUsuario);
+        if (respuestaUsuario.equalsIgnoreCase(preguntaActual.getRespuesta())) {
+            Respuesta correcta = new Respuesta(preguntaActual.getId(), preguntaActual.getEnunciado(), respuestaUsuario);
 
-            // Check if this question (by ID) has already been added to our `respuestasCorrectas` list
-            if (!respuestasCorrectas.contains(answeredCorrectly)) { // Uses equals() on ID
-                respuestasCorrectas.add(answeredCorrectly); // Add the correctly answered question
+            if (!respuestasCorrectas.contains(correcta)) {
+                respuestasCorrectas.add(correcta);
                 recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.correcta"));
-                // *** DO NOT MODIFY userQuestion.setRespuesta(respuestaUsuario); HERE! ***
-                // This was the source of the problem. We are in recovery, not setting answers.
             } else {
                 recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.yaRespondida"));
             }
@@ -196,16 +163,23 @@ public class CuestionarioController {
         }
     }
 
-    private void finalizarRecuperar(String contrasenia) {
+    private void siguientePreguntaRecuperar() {
+        if (indicePreguntaRecuperar < preguntasAleatorias.size() - 1) {
+            indicePreguntaRecuperar++;
+            mostrarPreguntaRecuperarActual();
+        } else {
+            recuperarView.mostrarMensaje("No hay más preguntas.");
+        }
+    }
+
+    private void finalizarRecuperar(String contrasena) {
         if (respuestasCorrectas.size() >= 3) {
-            recuperarView.mostrarMensaje(String.format(mi.get("cuestionario.recuperar.recuperada"), contrasenia));
+            recuperarView.mostrarMensaje(String.format(mi.get("cuestionario.recuperar.recuperada"), contrasena));
             recuperarView.dispose();
         } else {
             recuperarView.mostrarMensaje(mi.get("cuestionario.recuperar.minimo"));
         }
     }
-
-    // --- Main Questionnaire Logic (No changes needed for this specific problem) ---
 
     private void guardar() {
         String enunciado = cuestionarioView.getTxtPreguntas().getText().trim();
@@ -218,7 +192,7 @@ public class CuestionarioController {
 
         Respuesta seleccionada = null;
         for (Respuesta r : preguntasAleatorias) {
-            if (r.getEnunciado().equals(enunciado)) { // Assuming enunciados are unique enough for this check
+            if (r.getEnunciado().equals(enunciado)) {
                 seleccionada = r;
                 break;
             }
@@ -229,15 +203,8 @@ public class CuestionarioController {
             return;
         }
 
-        // Create a new Respuesta object with the user's input for saving
         Respuesta respuestaParaGuardar = new Respuesta(seleccionada.getId(), seleccionada.getEnunciado(), respuesta);
-
-        // Add or update the response in the main Cuestionario object
-        // The Cuestionario class's agregarRespuesta method handles if it's an add or update based on ID
         cuestionario.agregarRespuesta(respuestaParaGuardar);
-        System.out.println("Respuesta agregada/actualizada en cuestionario: " + respuestaParaGuardar.getEnunciado());
-
-
         cuestionarioView.mostrarMensaje(mi.get("cuestionario.guardar.ok"));
     }
 
@@ -247,12 +214,7 @@ public class CuestionarioController {
             return;
         }
 
-        System.out.println("Cantidad de respuestas guardadas: " + cuestionario.getRespuestas().size());
-        for (Respuesta r : cuestionario.getRespuestas()) {
-            System.out.println(" - Pregunta: " + r.getEnunciado() + " | Respuesta: " + r.getRespuesta());
-        }
-
-        if (cuestionario.getRespuestas().size() < 3) { // This check now uses the corrected Cuestionario's responses
+        if (cuestionario.getRespuestas().size() < 3) {
             cuestionarioView.mostrarMensaje(mi.get("cuestionario.finalizar.minimo"));
             return;
         }
@@ -303,6 +265,11 @@ public class CuestionarioController {
     }
 
     private void siguientePregunta() {
+        if (cuestionario == null || preguntasAleatorias == null) {
+            cuestionarioView.mostrarMensaje("Primero debe generar el cuestionario.");
+            return;
+        }
+
         indicePreguntaActual++;
         if (indicePreguntaActual >= preguntasAleatorias.size()) {
             cuestionarioView.mostrarMensaje("Ya no hay más preguntas.");
@@ -322,7 +289,7 @@ public class CuestionarioController {
         cuestionario = new Cuestionario(username);
         cuestionario.aplicarIdioma(mi);
 
-        cargarComboPreguntas(); // This loads *default* questions
+        cargarComboPreguntas();
         indicePreguntaActual = 0;
         mostrarPreguntaActual();
 
@@ -335,7 +302,6 @@ public class CuestionarioController {
             cuestionarioView.getTxtPreguntas().setText(r.getEnunciado());
             cuestionarioView.getLblPreguntasR().setText(r.getEnunciado());
 
-            // Check if the user has already answered this question in their Cuestionario
             Respuesta respondido = cuestionario.buscarRespuestaPorId(r.getId());
             if (respondido != null) {
                 cuestionarioView.getTxtRespuesta().setText(respondido.getRespuesta());
@@ -349,8 +315,7 @@ public class CuestionarioController {
 
     private void cargarComboPreguntas() {
         preguntasAleatorias = new ArrayList<>();
-
-        Cuestionario temporal = new Cuestionario(""); // Used to get default questions
+        Cuestionario temporal = new Cuestionario("");
         temporal.aplicarIdioma(mi);
         List<Respuesta> todasLasPreguntas = temporal.preguntasPorDefecto();
 
@@ -394,10 +359,9 @@ public class CuestionarioController {
         cuestionarioView.getSpnMes().setEnabled(false);
         cuestionarioView.getSpnAno().setEnabled(false);
         cuestionarioView.getTxtCorreo().setEnabled(false);
+        cuestionarioView.getBtnGenerar().setEnabled(false);
 
-        cuestionarioView.getBtnGenerar().setEnabled(false); // Can't generate new questionnaire if already registered
-
-        cargarComboPreguntas(); // Load default questions for display/interaction
+        cargarComboPreguntas();
         cuestionarioView.habilitarPreguntas(true);
     }
 }

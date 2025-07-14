@@ -4,7 +4,6 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
 
 public class Cuestionario {
     private String usuario;
@@ -54,6 +53,7 @@ public class Cuestionario {
         }
         return lista;
     }
+
     public void aplicarIdioma(MensajeInternacionalizacionHandler mi) {
         for (Pregunta p : Pregunta.values()) {
             p.setMensajeIdioma(mi);
