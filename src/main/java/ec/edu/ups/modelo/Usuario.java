@@ -1,12 +1,15 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable; // ⬅️ Importar la interfaz Serializable
 import java.util.GregorianCalendar;
 
 /**
  * La clase **Usuario** representa a un usuario dentro del sistema, almacenando
  * información personal y de autenticación.
  */
-public class Usuario {
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String cedula;
     private String contrasena;
     private Rol rol;

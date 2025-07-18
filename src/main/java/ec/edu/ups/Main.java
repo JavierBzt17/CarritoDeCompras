@@ -5,12 +5,13 @@ import ec.edu.ups.controlador.ProductoController;
 import ec.edu.ups.controlador.UsuarioController;
 import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.dao.CuestionarioDAO;
+import ec.edu.ups.dao.FabricaDAO; // Importar FabricaDAO
 import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.dao.UsuarioDAO;
 import ec.edu.ups.dao.impl.CarritoDAOMemoria;
 import ec.edu.ups.dao.impl.CuestionarioDAOMemoria;
 import ec.edu.ups.dao.impl.ProductoDAOMemoria;
-import ec.edu.ups.dao.impl.UsuarioDAOMemoria;
+// import ec.edu.ups.dao.impl.UsuarioDAOMemoria; // ⬅️ Ya no necesitamos importar la implementación de memoria directamente
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
@@ -54,7 +55,15 @@ public class Main {
             ProductoDAO productoDAO = new ProductoDAOMemoria();
             CarritoDAO carritoDAO = new CarritoDAOMemoria();
             CuestionarioDAO cuestionarioDAO = new CuestionarioDAOMemoria();
-            UsuarioDAO usuarioDAO = new UsuarioDAOMemoria();
+
+            // ⬅️ CAMBIO CLAVE AQUÍ: Usar FabricaDAO para obtener el UsuarioDAO
+            // Puedes elegir "TEXTO" o "BINARIO" para determinar qué DAO usar.
+            // Por ejemplo, para usar el DAO de texto:
+            UsuarioDAO usuarioDAO = FabricaDAO.getUsuarioDAO("TEXTO");
+            // O para usar el DAO binario:
+            // UsuarioDAO usuarioDAO = FabricaDAO.getUsuarioDAO("BINARIO");
+            // ---------------------------------------------------------------
+
 
             // Inicialización de la vista de Login y su controlador
             LoginView loginView = new LoginView(mi);
