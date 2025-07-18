@@ -3,12 +3,27 @@ package ec.edu.ups.vista;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * La clase **JDesktopPane** extiende `javax.swing.JDesktopPane` para crear un área de escritorio
+ * personalizada que dibuja un gráfico de un carrito de compras y un texto "SUPERMERCADOS EL AHORRO"
+ * en su centro. Este componente sirve como fondo visual para las ventanas internas de la aplicación.
+ */
 public class JDesktopPane extends javax.swing.JDesktopPane {
 
+    /**
+     * Constructor para la clase JDesktopPane.
+     * Llama al constructor de la superclase.
+     */
     public JDesktopPane() {
         super();
     }
 
+    /**
+     * Sobrescribe el método `paintComponent` para realizar el dibujo personalizado del carrito de compras
+     * y el texto en el fondo del JDesktopPane.
+     *
+     * @param g El contexto gráfico en el que se va a pintar.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
