@@ -1,5 +1,6 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable; // 1. Importación necesaria
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ArrayList;
@@ -9,14 +10,23 @@ import java.util.Iterator;
  * Representa un carrito de compras en el sistema.
  * Contiene una lista de items, información del usuario asociado, una fecha de creación
  * y la lógica de negocio para calcular los totales.
- *
+ * AHORA ES SERIALIZABLE para permitir la persistencia en archivos binarios.
  */
-public class Carrito {
+// 2. Se añade "implements Serializable"
+public class Carrito implements Serializable {
+
+    /**
+     * UID de versión para la serialización. Previene errores de versionado.
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constante que define el valor del Impuesto al Valor Agregado (IVA).
+     * Se define como 'static' para ser más eficiente en memoria.
      */
-    private final double IVA = 0.12;
+    // 3. Se añade "static"
+    private static final double IVA = 0.12;
+
     private int codigo;
     private GregorianCalendar fechaCreacion;
     private List<ItemCarrito> items;

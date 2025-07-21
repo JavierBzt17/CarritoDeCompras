@@ -23,6 +23,8 @@ public class ProductoEditarView extends JInternalFrame {
     private JLabel lblEditar;
     private JButton btnActualizar;
     private JButton btnBuscar;
+    private JLabel lblStock;
+    private JTextField txtStock;
     private DefaultTableModel modelo;
     private MensajeInternacionalizacionHandler mi;
 
@@ -274,6 +276,22 @@ public class ProductoEditarView extends JInternalFrame {
      */
     public void setModelo(DefaultTableModel modelo) {
         this.modelo = modelo;
+    }
+
+    public JLabel getLblStock() {
+        return lblStock;
+    }
+
+    public void setLblStock(JLabel lblStock) {
+        this.lblStock = lblStock;
+    }
+
+    public JTextField getTxtStock() {
+        return txtStock;
+    }
+
+    public void setTxtStock(JTextField txtStock) {
+        this.txtStock = txtStock;
     }
 
     /**

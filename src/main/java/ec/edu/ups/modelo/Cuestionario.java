@@ -2,14 +2,23 @@ package ec.edu.ups.modelo;
 
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
+import java.io.Serializable; // 1. Importación necesaria para la serialización
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * La clase `Cuestionario` representa un cuestionario asociado a un usuario,
  * que contiene una lista de respuestas a preguntas.
+ * AHORA ES SERIALIZABLE para permitir la persistencia en archivos binarios.
  */
-public class Cuestionario {
+// 2. Se añade "implements Serializable"
+public class Cuestionario implements Serializable {
+
+    /**
+     * UID de versión para la serialización. Previene errores de versionado.
+     */
+    private static final long serialVersionUID = 1L;
+
     private String usuario;
     private List<Respuesta> respuestas;
 

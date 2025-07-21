@@ -1,4 +1,5 @@
 package ec.edu.ups.modelo;
+
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 /**
@@ -21,7 +22,8 @@ public enum Pregunta {
     NOMBRE_COLEGIO("pregunta.nombre_colegio");
 
     private String enunciado;
-    private MensajeInternacionalizacionHandler mi;
+
+    private transient MensajeInternacionalizacionHandler mi;
 
     /**
      * Constructor para los elementos de la enumeración Pregunta.

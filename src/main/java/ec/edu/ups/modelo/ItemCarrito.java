@@ -1,10 +1,20 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable; // 1. Importación necesaria
+
 /**
  * La clase **ItemCarrito** representa un elemento dentro de un carrito de compras,
  * que incluye un producto y la cantidad de dicho producto.
+ * AHORA ES SERIALIZABLE para que el objeto Carrito completo se pueda guardar.
  */
-public class ItemCarrito {
+// 2. Se añade "implements Serializable"
+public class ItemCarrito implements Serializable {
+
+    /**
+     * UID de versión para la serialización.
+     */
+    private static final long serialVersionUID = 1L;
+
     private Producto producto;
     private int cantidad;
 

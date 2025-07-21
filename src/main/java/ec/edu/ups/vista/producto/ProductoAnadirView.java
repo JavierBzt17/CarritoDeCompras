@@ -26,6 +26,8 @@ public class ProductoAnadirView extends JInternalFrame{
     private JLabel lblCodigo;
     private JLabel lblNombre;
     private JLabel lblPrecio;
+    private JTextField TxtStock;
+    private JLabel lblStock;
     private MensajeInternacionalizacionHandler mi;
 
     /**
@@ -285,6 +287,30 @@ public class ProductoAnadirView extends JInternalFrame{
      */
     public void setLblPrecio(JLabel lblPrecio) {
         this.lblPrecio = lblPrecio;
+    }
+
+    public JLabel getLblAñadir() {
+        return lblAñadir;
+    }
+
+    public void setLblAñadir(JLabel lblAñadir) {
+        this.lblAñadir = lblAñadir;
+    }
+
+    public JTextField getTxtStock() {
+        return TxtStock;
+    }
+
+    public void setTxtStock(JTextField txtStock) {
+        TxtStock = txtStock;
+    }
+
+    public JLabel getLblStock() {
+        return lblStock;
+    }
+
+    public void setLblStock(JLabel lblStock) {
+        this.lblStock = lblStock;
     }
 
     /**

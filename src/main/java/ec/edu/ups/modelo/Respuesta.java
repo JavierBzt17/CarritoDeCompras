@@ -1,12 +1,21 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable; // 1. Importación necesaria
 import java.util.Objects;
 
 /**
  * La clase **Respuesta** representa una respuesta a una pregunta específica dentro de un cuestionario.
  * Contiene un identificador único para la pregunta, el enunciado de la pregunta y la respuesta proporcionada.
+ * AHORA ES SERIALIZABLE para que los cuestionarios puedan ser guardados.
  */
-public class Respuesta {
+// 2. Se añade "implements Serializable"
+public class Respuesta implements Serializable {
+
+    /**
+     * UID de versión para la serialización.
+     */
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String enunciado;
     private String respuesta;

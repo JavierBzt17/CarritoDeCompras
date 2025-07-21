@@ -23,9 +23,9 @@ public class ProductoDAOMemoria implements ProductoDAO {
      */
     public ProductoDAOMemoria() {
         productos = new ArrayList<>();
-        crear(new Producto(1, "a",15));
-        crear(new Producto(2, "b",25));
-        crear(new Producto(3, "c",35));
+        crear(new Producto(1, "Laptop Gamer", 1250.00, 10));
+        crear(new Producto(2, "Mouse Inalámbrico", 25.50, 50));
+        crear(new Producto(3, "Teclado Mecánico", 85.75, 30));
     }
 
     /**
@@ -64,8 +64,9 @@ public class ProductoDAOMemoria implements ProductoDAO {
     @Override
     public List<Producto> buscarPorNombre(String nombre) {
         List<Producto> productosEncontrados = new ArrayList<>();
+        String nombreBusqueda = nombre.toLowerCase();
         for (Producto producto : productos) {
-            if (producto.getNombre().equalsIgnoreCase(nombre)) {
+            if (producto.getNombre().toLowerCase().contains(nombreBusqueda)) {
                 productosEncontrados.add(producto);
             }
         }

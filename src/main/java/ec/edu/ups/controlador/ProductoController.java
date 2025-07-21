@@ -10,7 +10,6 @@ import ec.edu.ups.vista.producto.ProductoEditarView;
 import ec.edu.ups.vista.producto.ProductoEliminarView;
 import ec.edu.ups.vista.producto.ProductoListaView;
 
-import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -80,8 +79,10 @@ public class ProductoController {
         String codigoTexto = productoAnadirView.getTxtCodigo().getText().trim();
         String nombre = productoAnadirView.getTxtNombre().getText().trim();
         String precioTexto = productoAnadirView.getTxtPrecio().getText().trim();
+        // ✅ CAMBIO: Obtener el texto del stock desde la vista
+        String stockTexto = productoAnadirView.getTxtStock().getText().trim();
 
-        if (codigoTexto.isEmpty() || nombre.isEmpty() || precioTexto.isEmpty()) {
+        if (codigoTexto.isEmpty() || nombre.isEmpty() || precioTexto.isEmpty() || stockTexto.isEmpty()) {
             productoAnadirView.mostrarMensaje(mi.get("producto.mensaje.campos.vacios"));
             return;
         }
@@ -95,14 +96,23 @@ public class ProductoController {
             return;
         }
         double precio = Double.parseDouble(precioTexto);
+        // ✅ CAMBIO: Validar que el stock sea un número
+        if (!stockTexto.matches("\\d+")) {
+            productoAnadirView.mostrarMensaje("El stock debe ser un número entero válido."); // Puedes añadir esta clave a tus archivos de idioma
+            return;
+        }
+        int stock = Integer.parseInt(stockTexto);
+
         if (productoDAO.buscarPorCodigo(codigo) != null) {
             productoAnadirView.mostrarMensaje(mi.get("producto.mensaje.error.codigo.existe"));
             return;
         }
-        productoDAO.crear(new Producto(codigo, nombre, precio));
+        // ✅ CAMBIO: Llamar al constructor con los 4 argumentos, incluyendo el stock
+        productoDAO.crear(new Producto(codigo, nombre, precio, stock));
         productoAnadirView.mostrarMensaje(mi.get("producto.mensaje.guardado.correctamente"));
         productoAnadirView.limpiarCampos();
-        productoAnadirView.mostrarProductos(productoDAO.listarTodos());
+        // Esto debería ser productoListaView.cargarDatos, no productoAnadirView.mostrarProductos
+        productoListaView.cargarDatos(productoDAO.listarTodos());
     }
 
     /**
@@ -132,8 +142,10 @@ public class ProductoController {
         String txtCod = productoEditarView.getTxtCodigo().getText().trim();
         String nombre = productoEditarView.getTxtNombre().getText().trim();
         String txtPrecio = productoEditarView.getTxtPrecio().getText().trim();
+        // ✅ CAMBIO: Obtener el stock desde la vista de edición
+        String txtStock = productoEditarView.getTxtStock().getText().trim();
 
-        if (txtCod.isEmpty() || nombre.isEmpty() || txtPrecio.isEmpty()) {
+        if (txtCod.isEmpty() || nombre.isEmpty() || txtPrecio.isEmpty() || txtStock.isEmpty()) {
             productoEditarView.mostrarMensaje(mi.get("producto.mensaje.campos.vacios"));
             return;
         }
@@ -147,6 +159,13 @@ public class ProductoController {
             return;
         }
         double precio = Double.parseDouble(txtPrecio);
+        // ✅ CAMBIO: Validar el stock
+        if (!txtStock.matches("\\d+")) {
+            productoEditarView.mostrarMensaje("El stock debe ser un número entero válido.");
+            return;
+        }
+        int stock = Integer.parseInt(txtStock);
+
         Producto producto = productoDAO.buscarPorCodigo(codigo);
         if (producto == null) {
             productoEditarView.mostrarMensaje(mi.get("producto.mensaje.no.encontrado"));
@@ -159,6 +178,8 @@ public class ProductoController {
         }
         producto.setNombre(nombre);
         producto.setPrecio(precio);
+        // ✅ CAMBIO: Actualizar también el stock del producto
+        producto.setStock(stock);
         productoDAO.actualizar(producto);
         productoEditarView.mostrarMensaje(mi.get("producto.mensaje.actualizado.correctamente"));
     }
@@ -211,6 +232,8 @@ public class ProductoController {
         if (producto != null) {
             productoEliminarView.getTxtNombre().setText(producto.getNombre());
             productoEliminarView.getTxtPrecio().setText(Formateador.formatearMoneda(producto.getPrecio(), mi.getLocale()));
+            // ✅ CAMBIO: Mostrar también el stock
+            productoEliminarView.getTxtStock().setText(String.valueOf(producto.getStock()));
         } else {
             productoEliminarView.mostrarMensaje(mi.get("producto.mensaje.no.encontrado"));
             productoEliminarView.limpiarCampos();
@@ -235,7 +258,9 @@ public class ProductoController {
         Producto producto = productoDAO.buscarPorCodigo(codigo);
         if (producto != null) {
             productoEditarView.getTxtNombre().setText(producto.getNombre());
-            productoEditarView.getTxtPrecio().setText(Formateador.formatearMoneda(producto.getPrecio(), mi.getLocale()));
+            productoEditarView.getTxtPrecio().setText(String.valueOf(producto.getPrecio())); // Usar String.valueOf para evitar problemas de formato
+            // ✅ CAMBIO: Mostrar también el stock
+            productoEditarView.getTxtStock().setText(String.valueOf(producto.getStock()));
         } else {
             productoEditarView.mostrarMensaje(mi.get("producto.mensaje.no.encontrado"));
             productoEditarView.limpiarCampos();

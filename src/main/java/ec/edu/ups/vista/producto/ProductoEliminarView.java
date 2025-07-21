@@ -22,6 +22,8 @@ public class ProductoEliminarView extends JInternalFrame {
     private JLabel lblNombre;
     private JLabel lblCodigo;
     private JButton btnBuscar;
+    private JTextField txtStock;
+    private JLabel lblStock;
     private MensajeInternacionalizacionHandler mi;
 
     /**
@@ -254,6 +256,22 @@ public class ProductoEliminarView extends JInternalFrame {
      */
     public void setBtnBuscar(JButton btnBuscar) {
         this.btnBuscar = btnBuscar;
+    }
+
+    public JTextField getTxtStock() {
+        return txtStock;
+    }
+
+    public void setTxtStock(JTextField txtStock) {
+        this.txtStock = txtStock;
+    }
+
+    public JLabel getLblStock() {
+        return lblStock;
+    }
+
+    public void setLblStock(JLabel lblStock) {
+        this.lblStock = lblStock;
     }
 
     /**

@@ -1,12 +1,22 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable;
+
 /**
- * La clase **Producto** representa un artículo con un código único, nombre y precio.
+ * La clase **Producto** representa un artículo con un código único, nombre, precio y stock.
+ * (Esta clase ya está correcta y completa. No necesita cambios.)
  */
-public class Producto {
+public class Producto implements Serializable {
+
+    /**
+     * UID de versión para la serialización.
+     */
+    private static final long serialVersionUID = 1L;
+
     private int codigo;
     private String nombre;
     private double precio;
+    private int stock;
 
     /**
      * Constructor para la clase Producto.
@@ -14,11 +24,13 @@ public class Producto {
      * @param codigo El código único del producto.
      * @param nombre El nombre del producto.
      * @param precio El precio del producto.
+     * @param stock La cantidad disponible del producto.
      */
-    public Producto(int codigo, String nombre, double precio) {
+    public Producto(int codigo, String nombre, double precio, int stock) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;
+        this.stock = stock;
     }
 
     /**
@@ -76,16 +88,35 @@ public class Producto {
     }
 
     /**
+     * Obtiene el stock disponible del producto.
+     *
+     * @return La cantidad en stock.
+     */
+    public int getStock() {
+        return stock;
+    }
+
+    /**
+     * Establece el stock disponible del producto.
+     *
+     * @param stock La nueva cantidad en stock.
+     */
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    /**
      * Retorna una representación en cadena del objeto Producto.
      *
-     * @return Una cadena que representa el producto con su código, nombre y precio.
+     * @return Una cadena que representa el producto con su código, nombre, precio y stock.
      */
     @Override
     public String toString() {
         return "Producto{" +
-                "codigo='" + codigo + '\'' +
+                "codigo=" + codigo +
                 ", nombre='" + nombre + '\'' +
                 ", precio=" + precio +
+                ", stock=" + stock +
                 '}';
     }
 }

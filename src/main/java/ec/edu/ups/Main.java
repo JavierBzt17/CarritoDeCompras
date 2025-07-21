@@ -5,15 +5,14 @@ import ec.edu.ups.controlador.ProductoController;
 import ec.edu.ups.controlador.UsuarioController;
 import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.dao.CuestionarioDAO;
-import ec.edu.ups.dao.FabricaDAO; // Importar FabricaDAO
+import ec.edu.ups.dao.FabricaDAO; // Se mantiene la importación de la fábrica
 import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.dao.UsuarioDAO;
-import ec.edu.ups.dao.impl.CarritoDAOMemoria;
+// Ya no se necesitan las importaciones directas a las implementaciones de memoria
 import ec.edu.ups.dao.impl.CuestionarioDAOMemoria;
-import ec.edu.ups.dao.impl.ProductoDAOMemoria;
-// import ec.edu.ups.dao.impl.UsuarioDAOMemoria; // ⬅️ Ya no necesitamos importar la implementación de memoria directamente
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
+import ec.edu.ups.util.DirectorySelector; // Importación de la nueva utilidad
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.*;
 import ec.edu.ups.vista.carrito.CarritoAnadirView;
@@ -26,48 +25,72 @@ import ec.edu.ups.vista.producto.ProductoEliminarView;
 import ec.edu.ups.vista.producto.ProductoListaView;
 import ec.edu.ups.vista.usuario.*;
 
+import javax.swing.*; // Importación para JOptionPane y UIManager
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * La clase **Main** es el punto de entrada principal de la aplicación.
- * Se encarga de inicializar todos los componentes del sistema, como los DAOs,
- * las vistas y los controladores, y de establecer la interacción entre ellos.
- * Configura la vista de login y, tras una autenticación exitosa, despliega la
- * ventana del menú principal con las funcionalidades correspondientes al rol del usuario.
- * También gestiona el cambio de idioma de la interfaz.
+ * La clase Main es el punto de entrada principal de la aplicación.
+ * Ahora, primero pregunta al usuario el modo de persistencia deseado
+ * antes de inicializar los componentes del sistema.
  */
 public class Main {
     /**
      * El método `main` es el punto de inicio de la aplicación.
-     * Se ejecuta en el hilo de despacho de eventos de AWT para asegurar
-     * la correcta manipulación de la interfaz gráfica.
-     *
-     * @param args Argumentos de la línea de comandos (no utilizados en esta aplicación).
      */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> {
+            try {
+                // Mejora la apariencia de las ventanas para que coincida con el sistema operativo
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            // --- INICIO: LÓGICA DE SELECCIÓN DE PERSISTENCIA ---
+            String[] opciones = {"En Memoria", "Archivos de Texto", "Archivos Binarios"};
+            int eleccion = JOptionPane.showOptionDialog(null, "¿Cómo deseas gestionar los datos?",
+                    "Selector de Modo de Persistencia", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, opciones, opciones[0]);
+
+            FabricaDAO fabrica = FabricaDAO.getFabrica();
+
+            switch (eleccion) {
+                case 0: // En Memoria
+                    fabrica.setPersistencia(FabricaDAO.Tipo.MEMORIA);
+                    break;
+                case 1: // Archivos de Texto
+                case 2: // Archivos Binarios
+                    String ruta = DirectorySelector.selectDirectory();
+                    if (ruta == null) {
+                        System.out.println("Operación cancelada por el usuario. Saliendo.");
+                        System.exit(0);
+                    }
+                    fabrica.setBasePath(ruta);
+                    fabrica.setPersistencia(eleccion == 1 ? FabricaDAO.Tipo.TEXTO : FabricaDAO.Tipo.BINARIO);
+                    break;
+                default: // El usuario cerró la ventana
+                    System.out.println("Aplicación cerrada.");
+                    System.exit(0);
+                    return; // Salir del método
+            }
+            // --- FIN: LÓGICA DE SELECCIÓN DE PERSISTENCIA ---
+
+
             MensajeInternacionalizacionHandler mi = new MensajeInternacionalizacionHandler("es", "EC");
 
-            // Inicialización de los DAOs (capa de datos)
-            ProductoDAO productoDAO = new ProductoDAOMemoria();
-            CarritoDAO carritoDAO = new CarritoDAOMemoria();
-            CuestionarioDAO cuestionarioDAO = new CuestionarioDAOMemoria();
-
-            // ⬅️ CAMBIO CLAVE AQUÍ: Usar FabricaDAO para obtener el UsuarioDAO
-            // Puedes elegir "TEXTO" o "BINARIO" para determinar qué DAO usar.
-            // Por ejemplo, para usar el DAO de texto:
-            UsuarioDAO usuarioDAO = FabricaDAO.getUsuarioDAO("TEXTO");
-            // O para usar el DAO binario:
-            // UsuarioDAO usuarioDAO = FabricaDAO.getUsuarioDAO("BINARIO");
-            // ---------------------------------------------------------------
-
+            // --- CAMBIO CLAVE: Obtener todos los DAO desde la fábrica ya configurada ---
+            UsuarioDAO usuarioDAO = fabrica.getUsuarioDAO();
+            ProductoDAO productoDAO = fabrica.getProductoDAO();
+            CarritoDAO carritoDAO = fabrica.getCarritoDAO();
+            // CuestionarioDAO cuestionarioDAO = fabrica.getCuestionarioDAO(); // Descomentar cuando lo implementes en FabricaDAO
 
             // Inicialización de la vista de Login y su controlador
             LoginView loginView = new LoginView(mi);
-            UsuarioController loginController = new UsuarioController(usuarioDAO, loginView, cuestionarioDAO, mi);
+            // Pasar un CuestionarioDAOMemoria temporal si aún no está en la fábrica
+            UsuarioController loginController = new UsuarioController(usuarioDAO, loginView, new CuestionarioDAOMemoria(), mi);
             loginView.setVisible(true);
 
             loginView.addWindowListener(new WindowAdapter() {
@@ -76,6 +99,7 @@ public class Main {
                     Usuario usuarioAutenticado = loginController.getUsuarioAutenticado();
 
                     if (usuarioAutenticado != null) {
+                        // El resto del código permanece exactamente igual...
                         MenuPrincipalView principalView = new MenuPrincipalView(mi, usuarioAutenticado.getNombre());
 
                         // --- Inicialización de todas las vistas ---
@@ -111,6 +135,7 @@ public class Main {
                             principalView.deshabilitarMenusAdministrador();
                         }
 
+                        // ... Todos tus ActionListeners permanecen sin cambios ...
                         // Acción para Crear Producto
                         principalView.getMenuItemCrearProducto().addActionListener(e1 -> {
                             if (principalView.getjDesktopPane().getComponents().length > 0) {
@@ -234,12 +259,15 @@ public class Main {
                             }
                         });
 
+
+
                         principalView.getMenuItemSalir().addActionListener(e1 -> {
                             boolean confirmado = principalView.mostrarMensajePregunta(mi.get("principal.salir"));
                             if(confirmado) {
                                 System.exit(0);
                             }
                         });
+
 
                         // Lógica para cambiar de idioma
                         ActionListener languageListener = e1 -> {
