@@ -20,6 +20,10 @@ public class ProductoDAOTexto implements ProductoDAO {
      * @param basePath La carpeta base donde se creará el archivo "productos.txt".
      */
     public ProductoDAOTexto(String basePath) {
+        // ==================================================================
+        // AQUÍ SE DEFINE LA RUTA DEL ARCHIVO
+        // Combina la ruta base (ej: "data") con el nombre del archivo.
+        // ==================================================================
         this.filePath = Paths.get(basePath, "productos.txt").toString();
     }
 
@@ -76,7 +80,6 @@ public class ProductoDAOTexto implements ProductoDAO {
      * {@inheritDoc}
      */
     @Override
-    // RENOMBRADO: de 'update' a 'actualizar'
     public void actualizar(Producto producto) {
         List<Producto> productos = listarTodos();
         for (int i = 0; i < productos.size(); i++) {
@@ -92,7 +95,6 @@ public class ProductoDAOTexto implements ProductoDAO {
      * {@inheritDoc}
      */
     @Override
-    // RENOMBRADO: de 'delete' a 'eliminar'
     public void eliminar(int codigo) {
         List<Producto> productos = listarTodos();
         productos.removeIf(p -> p.getCodigo() == codigo);
@@ -103,7 +105,6 @@ public class ProductoDAOTexto implements ProductoDAO {
      * {@inheritDoc}
      */
     @Override
-    // RENOMBRADO: de 'findAll' a 'listarTodos'
     public List<Producto> listarTodos() {
         List<Producto> productos = new ArrayList<>();
         File file = new File(filePath);

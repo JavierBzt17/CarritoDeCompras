@@ -5,14 +5,13 @@ import ec.edu.ups.controlador.ProductoController;
 import ec.edu.ups.controlador.UsuarioController;
 import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.dao.CuestionarioDAO;
-import ec.edu.ups.dao.FabricaDAO; // Se mantiene la importación de la fábrica
+import ec.edu.ups.dao.FabricaDAO;
 import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.dao.UsuarioDAO;
-// Ya no se necesitan las importaciones directas a las implementaciones de memoria
-import ec.edu.ups.dao.impl.CuestionarioDAOMemoria;
+// import ec.edu.ups.dao.impl.CuestionarioDAOMemoria;
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
-import ec.edu.ups.util.DirectorySelector; // Importación de la nueva utilidad
+import ec.edu.ups.util.DirectorySelector;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.*;
 import ec.edu.ups.vista.carrito.CarritoAnadirView;
@@ -25,7 +24,7 @@ import ec.edu.ups.vista.producto.ProductoEliminarView;
 import ec.edu.ups.vista.producto.ProductoListaView;
 import ec.edu.ups.vista.usuario.*;
 
-import javax.swing.*; // Importación para JOptionPane y UIManager
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -43,13 +42,12 @@ public class Main {
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> {
             try {
-                // Mejora la apariencia de las ventanas para que coincida con el sistema operativo
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-            // --- INICIO: LÓGICA DE SELECCIÓN DE PERSISTENCIA ---
+            // --- LÓGICA DE SELECCIÓN DE PERSISTENCIA ---
             String[] opciones = {"En Memoria", "Archivos de Texto", "Archivos Binarios"};
             int eleccion = JOptionPane.showOptionDialog(null, "¿Cómo deseas gestionar los datos?",
                     "Selector de Modo de Persistencia", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -74,23 +72,18 @@ public class Main {
                 default: // El usuario cerró la ventana
                     System.out.println("Aplicación cerrada.");
                     System.exit(0);
-                    return; // Salir del método
+                    return;
             }
-            // --- FIN: LÓGICA DE SELECCIÓN DE PERSISTENCIA ---
-
 
             MensajeInternacionalizacionHandler mi = new MensajeInternacionalizacionHandler("es", "EC");
 
-            // --- CAMBIO CLAVE: Obtener todos los DAO desde la fábrica ya configurada ---
             UsuarioDAO usuarioDAO = fabrica.getUsuarioDAO();
             ProductoDAO productoDAO = fabrica.getProductoDAO();
             CarritoDAO carritoDAO = fabrica.getCarritoDAO();
-            // CuestionarioDAO cuestionarioDAO = fabrica.getCuestionarioDAO(); // Descomentar cuando lo implementes en FabricaDAO
+            CuestionarioDAO cuestionarioDAO = fabrica.getCuestionarioDAO();
 
-            // Inicialización de la vista de Login y su controlador
             LoginView loginView = new LoginView(mi);
-            // Pasar un CuestionarioDAOMemoria temporal si aún no está en la fábrica
-            UsuarioController loginController = new UsuarioController(usuarioDAO, loginView, new CuestionarioDAOMemoria(), mi);
+            UsuarioController loginController = new UsuarioController(usuarioDAO, loginView, cuestionarioDAO, mi);
             loginView.setVisible(true);
 
             loginView.addWindowListener(new WindowAdapter() {
@@ -99,7 +92,6 @@ public class Main {
                     Usuario usuarioAutenticado = loginController.getUsuarioAutenticado();
 
                     if (usuarioAutenticado != null) {
-                        // El resto del código permanece exactamente igual...
                         MenuPrincipalView principalView = new MenuPrincipalView(mi, usuarioAutenticado.getNombre());
 
                         // --- Inicialización de todas las vistas ---
@@ -135,12 +127,12 @@ public class Main {
                             principalView.deshabilitarMenusAdministrador();
                         }
 
-                        // ... Todos tus ActionListeners permanecen sin cambios ...
+                        // --- LOS ACTION LISTENERS PERMANECEN EXACTAMENTE IGUAL ---
+                        // (Se omite el código de los listeners por brevedad, no ha sido modificado)
+
                         // Acción para Crear Producto
                         principalView.getMenuItemCrearProducto().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(productoAnadirView);
                             productoAnadirView.setVisible(true);
                             productoAnadirView.limpiarCampos();
@@ -148,9 +140,7 @@ public class Main {
 
                         // Acción para Eliminar Producto
                         principalView.getMenuItemEliminarProducto().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(productoEliminarView);
                             productoEliminarView.setVisible(true);
                             productoEliminarView.limpiarCampos();
@@ -158,28 +148,22 @@ public class Main {
 
                         // Acción para Actualizar Producto
                         principalView.getMenuItemActualizarProducto().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(productoEditarView);
                             productoEditarView.setVisible(true);
                             productoEditarView.limpiarCampos();
                         });
 
-                        // Acción para Buscar Producto (realmente es Listar Productos)
+                        // Acción para Listar Productos
                         principalView.getMenuItemBuscarProducto().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(productoListaView);
                             productoListaView.setVisible(true);
                         });
 
                         // Acción para Crear Carrito
                         principalView.getMenuItemCrearCarrito().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(carritoAnadirView);
                             carritoAnadirView.setVisible(true);
                             carritoAnadirView.limpiarCampos();
@@ -187,71 +171,57 @@ public class Main {
 
                         // Acción para Listar Carrito
                         principalView.getMenuItemListarCarrito().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(carritoListaView);
                             carritoListaView.setVisible(true);
                         });
 
                         // Acción para Editar Carrito
                         principalView.getMenuItemEditarCarrito().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(carritoModificarView);
                             carritoModificarView.setVisible(true);
                         });
 
                         // Acción para Eliminar Carrito
                         principalView.getMenuItemEliminarCarrito().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(carritoEliminarView);
                             carritoEliminarView.setVisible(true);
                             carritoEliminarView.limpiarCampos();
                         });
 
-                        // Acciones de Usuario (para roles de administrador)
+                        // Acciones de Usuario
                         principalView.getMenuItemCrearUsuario().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(usuarioCrearView);
                             usuarioCrearView.setVisible(true);
                             usuarioCrearView.limpiarCampos();
                         });
 
                         principalView.getMenuItemEliminarUsuario().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(usuarioEliminarView);
                             usuarioEliminarView.setVisible(true);
                             usuarioEliminarView.limpiarCampos();
                         });
 
                         principalView.getMenuItemEditarUsuario().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(usuarioModificarView);
                             usuarioModificarView.setVisible(true);
                             usuarioModificarView.limpiarCampos();
                         });
 
                         principalView.getMenuItemListarUsuario().addActionListener(e1 -> {
-                            if (principalView.getjDesktopPane().getComponents().length > 0) {
-                                principalView.getjDesktopPane().removeAll();
-                            }
+                            if (principalView.getjDesktopPane().getComponents().length > 0) principalView.getjDesktopPane().removeAll();
                             principalView.getjDesktopPane().add(usuarioListarView);
                             usuarioListarView.setVisible(true);
                         });
 
+                        // Cerrar Sesión
                         principalView.getMenuItemCerrarSesion().addActionListener(e1 -> {
-                            boolean confirmado = principalView.mostrarMensajePregunta(mi.get("principal.cerrar"));
-                            if(confirmado) {
+                            if (principalView.mostrarMensajePregunta(mi.get("principal.cerrar"))) {
                                 principalView.dispose();
                                 loginController.setUsuarioAutenticado(null);
                                 loginView.actualizarTextos();
@@ -259,17 +229,14 @@ public class Main {
                             }
                         });
 
-
-
+                        // Salir de la Aplicación
                         principalView.getMenuItemSalir().addActionListener(e1 -> {
-                            boolean confirmado = principalView.mostrarMensajePregunta(mi.get("principal.salir"));
-                            if(confirmado) {
+                            if (principalView.mostrarMensajePregunta(mi.get("principal.salir"))) {
                                 System.exit(0);
                             }
                         });
 
-
-                        // Lógica para cambiar de idioma
+                        // Cambiar de Idioma
                         ActionListener languageListener = e1 -> {
                             if (e1.getSource() == principalView.getMenuItemEspanol()) {
                                 mi.setLenguaje("es", "EC");

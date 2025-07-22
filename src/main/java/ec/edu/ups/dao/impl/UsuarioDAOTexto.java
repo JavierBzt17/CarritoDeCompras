@@ -16,11 +16,16 @@ public class UsuarioDAOTexto implements UsuarioDAO {
      * Constructor que recibe la ruta base desde la FabricaDAO.
      */
     public UsuarioDAOTexto(String basePath) {
+        // ==================================================================
+        // AQUÍ SE DEFINE LA RUTA DEL ARCHIVO
+        // Combina la ruta base (ej: "data") con el nombre del archivo.
+        // ==================================================================
         this.filePath = Paths.get(basePath, "usuarios.txt").toString();
     }
 
     @Override
     public void crear(Usuario usuario) {
+        // Lógica para crear un usuario...
         try (PrintWriter out = new PrintWriter(new FileWriter(filePath, true))) {
             out.println(usuarioToString(usuario));
         } catch (IOException e) {
@@ -30,6 +35,7 @@ public class UsuarioDAOTexto implements UsuarioDAO {
 
     @Override
     public Usuario buscarPorCedula(String cedula) {
+        // Lógica para buscar un usuario...
         return listarTodos().stream()
                 .filter(u -> u.getCedula().equals(cedula))
                 .findFirst()
@@ -38,6 +44,7 @@ public class UsuarioDAOTexto implements UsuarioDAO {
 
     @Override
     public void actualizar(Usuario usuario) {
+        // Lógica para actualizar un usuario...
         List<Usuario> usuarios = listarTodos();
         for (int i = 0; i < usuarios.size(); i++) {
             if (usuarios.get(i).getCedula().equals(usuario.getCedula())) {
@@ -50,6 +57,7 @@ public class UsuarioDAOTexto implements UsuarioDAO {
 
     @Override
     public void eliminar(String cedula) {
+        // Lógica para eliminar un usuario...
         List<Usuario> usuarios = listarTodos();
         usuarios.removeIf(u -> u.getCedula().equals(cedula));
         guardarTodos(usuarios);
@@ -57,7 +65,11 @@ public class UsuarioDAOTexto implements UsuarioDAO {
 
     @Override
     public List<Usuario> listarTodos() {
+        // Lógica para listar todos los usuarios...
         List<Usuario> usuarios = new ArrayList<>();
+        File file = new File(filePath);
+        if (!file.exists()) return usuarios;
+
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -67,13 +79,15 @@ public class UsuarioDAOTexto implements UsuarioDAO {
                 }
             }
         } catch (IOException e) {
-            // No es un error si el archivo no existe la primera vez
+            // No es un error si el archivo no existe la primera vez, se crea al guardar.
+            System.err.println("Error de lectura en usuarios.txt (puede ser normal si aún no existe): " + e.getMessage());
         }
         return usuarios;
     }
 
     @Override
     public Usuario autenticar(String cedula, String contrasena) {
+        // Lógica para autenticar...
         return listarTodos().stream()
                 .filter(u -> u.getCedula().equals(cedula) && u.getContrasena().equals(contrasena))
                 .findFirst()
@@ -82,6 +96,7 @@ public class UsuarioDAOTexto implements UsuarioDAO {
 
     @Override
     public List<Usuario> listarPorRol(Rol rol) {
+        // Lógica para listar por rol...
         List<Usuario> todos = listarTodos();
         List<Usuario> porRol = new ArrayList<>();
         for (Usuario u : todos) {
